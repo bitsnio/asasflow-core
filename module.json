@@ -1,0 +1,12 @@
+{
+    "name": "Core",
+    "alias": "core",
+    "namespace": "Modules\\Core",
+    "provider": "Modules\\Core\\Providers\\CoreServiceProvider",
+    "version": "{{ MODULE_VERSION }}",
+    "enabled": true,
+    "requires": {},
+    "compatibility": {
+        "asasflow": "^1.0"
+    }
+}
