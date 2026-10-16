@@ -1,19 +1,11 @@
 <?php
 
 return [
-    /*
-    |--------------------------------------------------------------------------
-    | Module
-    |--------------------------------------------------------------------------
-    */
-
     'module' => [
         'name' => 'Core',
-        'title' => 'Core',
+        'title' => 'System Administration',
 
         'middleware' => [
-            'api',
-            'auth:api',
             'asasflow.permission',
         ],
 
@@ -21,105 +13,143 @@ return [
 
             /*
             |--------------------------------------------------------------------------
-            | GROUP
+            | Tenant Management
             |--------------------------------------------------------------------------
-            |
-            | "type" is not required here.
-            |
-            | Any menu item without a type automatically becomes a group.
-            |
             */
-
             [
-                'name' => 'organization',
-                'title' => 'Organization',
+                'name' => 'tenancy',
+                'title' => 'Tenant Management',
 
                 'children' => [
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | RESOURCE
-                    |--------------------------------------------------------------------------
-                    |
-                    | Generates apiResource CRUD routes.
-                    |
-                    */
-
                     [
-                        'name' => 'companies',
-                        'title' => 'Companies',
+                        'name' => 'tenants',
+                        'title' => 'Tenants',
                         'type' => 'resource',
-
                         'model' => true,
 
-                        /*
-                        | Optional. Full CRUD is the default.
-                        */
-
-                        // 'routes' => [
-                        //     'index',
-                        //     'show',
-                        //     'store',
-                        //     'update',
-                        //     'destroy',
-                        // ],
-
-                        /*
-                        | Optional permission descriptions.
-                        */
-
                         'permissions' => [
-                            'view' => 'View companies',
-                            'create' => 'Create companies',
-                            'update' => 'Update companies',
-                            'delete' => 'Delete companies',
+                            'view' => 'View tenants',
+                            'create' => 'Register tenants',
+                            'update' => 'Update tenants',
+                            'delete' => 'Delete tenants',
                         ],
 
-                        'children' => [
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | ACTION
-                            |--------------------------------------------------------------------------
-                            |
-                            | Custom endpoint.
-                            |
-                            | No controller_method is required.
-                            | The generated controller can be implemented later.
-                            |
-                            */
-
-                            [
-                                'name' => 'approve',
-                                'title' => 'Approve Company',
-                                'type' => 'action',
-
+                        'actions' => [
+                            'activate' => [
                                 'method' => 'POST',
-                                'path' => '{company}/approve',
-
-                                'controller' => [
-                                    'class' => 'CompanyActionController',
-                                ],
-
-                                'permissions' => [
-                                    'execute' => 'Approve companies',
-                                ],
+                                'permissionLabel' => 'Activate tenants',
                             ],
+                            'suspend' => [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Suspend tenants',
+                            ],
+                            'provision' => [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Provision tenant resources',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
 
+            /*
+            |--------------------------------------------------------------------------
+            | Access Management
+            |--------------------------------------------------------------------------
+            */
+            [
+                'name' => 'access',
+                'title' => 'Access Management',
+
+                'children' => [
+                    [
+                        'name' => 'users',
+                        'title' => 'Users',
+                        'type' => 'resource',
+                        'model' => true,
+
+                        'permissions' => [
+                            'view' => 'View users',
+                            'create' => 'Create users',
+                            'update' => 'Update users',
+                            'delete' => 'Delete users',
+                        ],
+
+                        'actions' => [
+                            'resetPassword' => [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Reset user passwords',
+                            ],
+                            'activate' => [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Activate users',
+                            ],
+                            'deactivate' => [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Deactivate users',
+                            ],
+                            'login'=> [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Login as user',
+                            ],
+                            'logout'=> [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Logout user',
+                            ],
+                            'register'=> [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Register user',
+                            ],
                         ],
                     ],
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ANOTHER RESOURCE
-                    |--------------------------------------------------------------------------
-                    */
-
                     [
-                        'name' => 'sites',
-                        'title' => 'Sites',
+                        'name' => 'roles',
+                        'title' => 'Roles Management',
                         'type' => 'resource',
                         'model' => true,
+
+                        'permissions' => [
+                            'view' => 'View roles',
+                            'create' => 'Create roles',
+                            'update' => 'Update roles',
+                            'delete' => 'Delete roles',
+                        ],
+                    ],
+
+                    [
+                        'name' => 'permissions',
+                        'title' => 'Permissions Management',
+                        'type' => 'resource',
+                        'model' => true,
+
+                        'permissions' => [
+                            'view' => 'View permissions',
+                        ],
+                    ],
+                ],
+            ],
+
+            /*
+            |--------------------------------------------------------------------------
+            | System Configuration
+            |--------------------------------------------------------------------------
+            */
+            [
+                'name' => 'configuration',
+                'title' => 'Configuration',
+
+                'children' => [
+                    [
+                        'name' => 'settings',
+                        'title' => 'Settings',
+                        'type' => 'resource',
+                        'model' => false,
+
+                        'permissions' => [
+                            'view' => 'View system settings',
+                            'update' => 'Update system settings',
+                        ],
                     ],
                 ],
             ],
