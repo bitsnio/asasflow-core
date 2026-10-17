@@ -1,10 +1,108 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "Tenants",
-    "title": "Tenants",
-    "description": "",
-    "type": "object",
-    "properties": [],
-    "required": [],
-    "additionalProperties": true
+    "$id": "https://api.bitsnio.com/schemas/tenant-creation.json",
+    "version": "1.0.0",
+    "schema": {
+        "title": "Tenant Creation Form",
+        "description": "Onboarding configuration for a new multi-tenant organization workspace.",
+        "type": "object",
+        "required": [
+            "name",
+            "slug",
+            "email",
+            "contact_number",
+            "valid_until"
+        ],
+        "properties": {
+            "name": {
+                "type": "string",
+                "title": "Tenant / Organization Name",
+                "default": "Bitsnio Corp"
+            },
+            "slug": {
+                "type": "string",
+                "title": "Subdomain Slug",
+                "pattern": "^[a-z0-9-]+$",
+                "description": "Unique identifier used for subdomain routing (e.g., 'bitsnio' for bitsnio.platform.com)"
+            },
+            "email": {
+                "type": "string",
+                "title": "Billing / Admin Email",
+                "minLength": 5
+            },
+            "contact_number": {
+                "type": "string",
+                "title": "Contact Number",
+                "minLength": 10
+            },
+            "address": {
+                "type": "object",
+                "title": "Address",
+                "properties": {
+                    "street_address": {
+                        "type": "string",
+                        "title": "Street Address"
+                    },
+                    "city": {
+                        "type": "string",
+                        "title": "City"
+                    },
+                    "state": {
+                        "type": "string",
+                        "title": "State / Province"
+                    },
+                    "postal_code": {
+                        "type": "string",
+                        "title": "Postal Code"
+                    }
+                },
+                "required": [
+                    "street_address",
+                    "city"
+                ]
+            },
+            "location_coordinates": {
+                "title": "Geographical Location",
+                "type": "object",
+                "properties": {
+                    "latitude": {
+                        "type": "number",
+                        "title": "Latitude"
+                    },
+                    "longitude": {
+                        "type": "number",
+                        "title": "Longitude"
+                    }
+                }
+            },
+            "valid_until": {
+                "type": "string",
+                "format": "date",
+                "title": "Subscription Validity Expiry Date",
+                "widget": {
+                    "formlyConfig": {
+                        "type": "date"
+                    }
+                }
+            },
+            "is_active": {
+                "type": "boolean",
+                "title": "Active Status",
+                "default": true
+            }
+        }
+    },
+    "model": {
+        "name": "Bitsnio Corp",
+        "slug": "bitsnio",
+        "email": "admin@bitsnio.com",
+        "contact_number": "+15552345678",
+        "address": {
+            "street_address": "123 Innovation Way",
+            "city": "Tech City",
+            "state": "Neverland",
+            "postal_code": "90210"
+        },
+        "valid_until": "2027-12-31",
+        "is_active": true
+    }
 }

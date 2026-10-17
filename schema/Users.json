@@ -1,10 +1,69 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "Users",
-    "title": "Users",
-    "description": "",
-    "type": "object",
-    "properties": [],
-    "required": [],
-    "additionalProperties": true
+    "$id": "https://api.bitsnio.com/schemas/tenant-user-management.json",
+    "version": "1.0.0",
+    "schema": {
+        "title": "Tenant & User Management Form",
+        "description": "User form configuration with multi-tenancy and site assignments.",
+        "type": "object",
+        "required": [
+            "firstName",
+            "lastName",
+            "email",
+            "tenant_id",
+            "site_id",
+            "role_id"
+        ],
+        "properties": {
+            "firstName": {
+                "type": "string",
+                "title": "First Name",
+                "default": "John"
+            },
+            "lastName": {
+                "type": "string",
+                "title": "Last Name"
+            },
+            "email": {
+                "type": "string",
+                "title": "Email Address",
+                "minLength": 5
+            },
+            "tenant_id": {
+                "type": "string",
+                "title": "Select Tenant",
+                "widget": {
+                    "formlyConfig": {
+                        "type": "hidden"
+                    }
+                }
+            },
+            "site_id": {
+                "type": "string",
+                "title": "Assigned Site",
+                "x-data-source": "active_sites",
+                "widget": {
+                    "formlyConfig": {
+                        "type": "select"
+                    }
+                }
+            },
+            "role_id": {
+                "type": "string",
+                "title": "User Role",
+                "x-data-source": "roles_list",
+                "widget": {
+                    "formlyConfig": {
+                        "type": "select"
+                    }
+                }
+            }
+        }
+    },
+    "model": {
+        "firstName": "John",
+        "email": "john.doe@example.com",
+        "tenant_id": "tenant_alpha",
+        "site_id": "site_hq_london",
+        "role_id": "role_admin"
+    }
 }

@@ -1,10 +1,45 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "Roles",
-    "title": "Roles Management",
-    "description": "",
-    "type": "object",
-    "properties": [],
-    "required": [],
-    "additionalProperties": true
+    "$id": "https://api.bitsnio.com/schemas/role-creation.json",
+    "version": "1.0.0",
+    "schema": {
+        "title": "Role & Permission Assignment Form",
+        "description": "Simplified configuration form for defining user roles and assigning permissions.",
+        "type": "object",
+        "required": [
+            "name"
+        ],
+        "properties": {
+            "name": {
+                "type": "string",
+                "title": "Role Name",
+                "default": "Editor",
+                "description": "Unique name for the role (e.g., Administrator, Manager)"
+            },
+            "permissions": {
+                "type": "array",
+                "title": "Assigned Permissions",
+                "uniqueItems": true,
+                "x-data-source": "permissions_list",
+                "items": {
+                    "type": "string"
+                },
+                "widget": {
+                    "formlyConfig": {
+                        "type": "select",
+                        "props": {
+                            "multiple": true,
+                            "placeholder": "Select permissions"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "model": {
+        "name": "Editor",
+        "permissions": [
+            "users.view",
+            "users.update"
+        ]
+    }
 }
