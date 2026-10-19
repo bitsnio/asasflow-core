@@ -8,7 +8,7 @@ use Modules\Core\Http\Controllers\Core\Access\Permissions\PermissionsController;
 use Modules\Core\Http\Controllers\Core\Configuration\Settings\SettingsController;
 
 Route::prefix('core')
-    ->middleware(['asasflow.permission'])
+    // ->middleware(['asasflow.permission'])
     ->group(function () {
     Route::prefix('tenancy')
         ->group(function () {

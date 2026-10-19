@@ -12,7 +12,13 @@ class UsersResource extends JsonResource
     public function toArray(Request $request): array
     {
         // @asasflow:generated-fields:start
-        return parent::toArray($request);
-        // @asasflow:generated-fields:end
+        return [
+            'firstName' => $this->firstName,
+            'lastName' => $this->lastName,
+            'email' => $this->email,
+            'tenant_id' => $this->tenant_id,
+            'site_id' => $this->site_id,
+            'role_id' => $this->role_id,
+        ];        // @asasflow:generated-fields:end
     }
 }

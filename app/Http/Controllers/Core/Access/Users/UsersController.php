@@ -54,45 +54,45 @@ class UsersController extends Controller
         return response()->noContent();
     }
 
-public function resetPassword(Request $request)
-{
-    return response()->json([
-        'message' => 'resetPassword not implemented',
-    ], 501);
-}
+    public function resetPassword(Request $request)
+    {
+        return response()->json([
+            'message' => 'resetPassword not implemented',
+        ], 501);
+    }
 
-public function activate(Request $request)
-{
-    return response()->json([
-        'message' => 'activate not implemented',
-    ], 501);
-}
+    public function activate(Request $request)
+    {
+        return response()->json([
+            'message' => 'activate not implemented',
+        ], 501);
+    }
 
-public function deactivate(Request $request)
-{
-    return response()->json([
-        'message' => 'deactivate not implemented',
-    ], 501);
-}
+    public function deactivate(Request $request)
+    {
+        return response()->json([
+            'message' => 'deactivate not implemented',
+        ], 501);
+    }
 
-public function login(Request $request)
-{
-    return response()->json([
-        'message' => 'login not implemented',
-    ], 501);
-}
+    public function login(Request $request)
+    {
+        return response()->json([
+            'message' => 'login not implemented',
+        ], 501);
+    }
 
-public function logout(Request $request)
-{
-    return response()->json([
-        'message' => 'logout not implemented',
-    ], 501);
-}
+    public function logout(Request $request)
+    {
+        return response()->json([
+            'message' => 'logout not implemented',
+        ], 501);
+    }
 
-public function register(Request $request)
-{
-    return response()->json([
-        'message' => 'register not implemented',
-    ], 501);
-}
+    public function register(Request $request)
+    {
+        return response()->json([
+            'message' => 'register not implemented',
+        ], 501);
+    }
 }

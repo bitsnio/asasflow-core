@@ -1,21 +1,23 @@
-    <?php
+<?php
 
-    namespace Modules\Core\Models;
+namespace Modules\Core\Models;
 
-    use Illuminate\Database\Eloquent\Model;
-    use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-    class Permissions extends Model
-    {
-        use SoftDeletes;
+class Permissions extends Model
+{
+    use SoftDeletes;
 
-        protected $fillable = [
-            // @asasflow:generated-fillable:start
-            // @asasflow:generated-fillable:end
-        ];
+    protected $fillable = [
+        // @asasflow:generated-fillable:start
 
-        protected $casts = [
-            // @asasflow:generated-casts:start
-            // @asasflow:generated-casts:end
-        ];
-    }
+        // @asasflow:generated-fillable:end
+    ];
+
+    protected $casts = [
+        // @asasflow:generated-casts:start
+
+        // @asasflow:generated-casts:end
+    ];
+}
