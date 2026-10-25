@@ -11,11 +11,11 @@ class Users extends Model
 
     protected $fillable = [
         // @asasflow:generated-fillable:start
+        'tenant_id',
+        'site_id',
         'firstName',
         'lastName',
         'email',
-        'tenant_id',
-        'site_id',
         'role_id',
         // @asasflow:generated-fillable:end
     ];

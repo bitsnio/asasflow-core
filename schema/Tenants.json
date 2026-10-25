@@ -1,108 +1,119 @@
 {
-    "$id": "https://api.bitsnio.com/schemas/tenant-creation.json",
-    "version": "1.0.0",
-    "schema": {
-        "title": "Tenant Creation Form",
-        "description": "Onboarding configuration for a new multi-tenant organization workspace.",
+  "$id": "https://api.bitsnio.com/schemas/tenants.json",
+  "version": "1.0.0",
+  "generator": {
+    "model": false,
+    "migration": false
+  },
+  "schema": {
+    "title": "Tenant Organization",
+    "description": "Onboarding and workspace configuration for tenants.",
+    "type": "object",
+    "required": ["name", "slug", "email", "contact_number", "valid_until"],
+    "properties": {
+      "name": {
+        "type": "string",
+        "title": "Organization Name",
+        "default": "Bitsnio Corp"
+      },
+      "slug": {
+        "type": "string",
+        "title": "Tenant Slug / Subdomain",
+        "pattern": "^[a-z0-9-]+$",
+        "description": "Unique identifier used for routing (e.g. acme)"
+      },
+      "email": {
+        "type": "string",
+        "format": "email",
+        "title": "Billing / Admin Email"
+      },
+      "contact_number": {
+        "type": "string",
+        "title": "Contact Number",
+        "minLength": 10
+      },
+      "domain": {
+        "type": "string",
+        "title": "Custom Domain",
+        "description": "Optional custom domain (e.g. erp.client.com)"
+      },
+      "database": {
+        "type": "string",
+        "title": "Database Name",
+        "description": "Optional database override for separate DB strategy"
+      },
+      "address": {
         "type": "object",
-        "required": [
-            "name",
-            "slug",
-            "email",
-            "contact_number",
-            "valid_until"
-        ],
+        "title": "Physical Address",
         "properties": {
-            "name": {
-                "type": "string",
-                "title": "Tenant / Organization Name",
-                "default": "Bitsnio Corp"
-            },
-            "slug": {
-                "type": "string",
-                "title": "Subdomain Slug",
-                "pattern": "^[a-z0-9-]+$",
-                "description": "Unique identifier used for subdomain routing (e.g., 'bitsnio' for bitsnio.platform.com)"
-            },
-            "email": {
-                "type": "string",
-                "title": "Billing / Admin Email",
-                "minLength": 5
-            },
-            "contact_number": {
-                "type": "string",
-                "title": "Contact Number",
-                "minLength": 10
-            },
-            "address": {
-                "type": "object",
-                "title": "Address",
-                "properties": {
-                    "street_address": {
-                        "type": "string",
-                        "title": "Street Address"
-                    },
-                    "city": {
-                        "type": "string",
-                        "title": "City"
-                    },
-                    "state": {
-                        "type": "string",
-                        "title": "State / Province"
-                    },
-                    "postal_code": {
-                        "type": "string",
-                        "title": "Postal Code"
-                    }
-                },
-                "required": [
-                    "street_address",
-                    "city"
-                ]
-            },
-            "location_coordinates": {
-                "title": "Geographical Location",
-                "type": "object",
-                "properties": {
-                    "latitude": {
-                        "type": "number",
-                        "title": "Latitude"
-                    },
-                    "longitude": {
-                        "type": "number",
-                        "title": "Longitude"
-                    }
-                }
-            },
-            "valid_until": {
-                "type": "string",
-                "format": "date",
-                "title": "Subscription Validity Expiry Date",
-                "widget": {
-                    "formlyConfig": {
-                        "type": "date"
-                    }
-                }
-            },
-            "is_active": {
-                "type": "boolean",
-                "title": "Active Status",
-                "default": true
-            }
-        }
-    },
-    "model": {
-        "name": "Bitsnio Corp",
-        "slug": "bitsnio",
-        "email": "admin@bitsnio.com",
-        "contact_number": "+15552345678",
-        "address": {
-            "street_address": "123 Innovation Way",
-            "city": "Tech City",
-            "state": "Neverland",
-            "postal_code": "90210"
+          "street_address": {
+            "type": "string",
+            "title": "Street Address"
+          },
+          "city": {
+            "type": "string",
+            "title": "City"
+          },
+          "state": {
+            "type": "string",
+            "title": "State / Province"
+          },
+          "postal_code": {
+            "type": "string",
+            "title": "Postal Code"
+          }
         },
-        "valid_until": "2027-12-31",
-        "is_active": true
+        "required": ["street_address", "city"]
+      },
+      "location_coordinates": {
+        "type": "object",
+        "title": "Geographical Coordinates",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "title": "Latitude"
+          },
+          "longitude": {
+            "type": "number",
+            "title": "Longitude"
+          }
+        }
+      },
+      "valid_until": {
+        "type": "string",
+        "format": "date",
+        "title": "Subscription Expiry Date",
+        "widget": {
+          "formlyConfig": {
+            "type": "datepicker"
+          }
+        }
+      },
+      "is_active": {
+        "type": "boolean",
+        "title": "Active Status",
+        "default": true
+      }
     }
+  },
+  "model": {
+    "name": "",
+    "slug": "",
+    "email": "",
+    "contact_number": "",
+    "domain": null,
+    "database": null,
+    "address": {
+      "street_address": "",
+      "city": "",
+      "state": "",
+      "postal_code": ""
+    },
+    "location_coordinates": {
+      "latitude": null,
+      "longitude": null
+    },
+    "valid_until": null,
+    "is_active": true
+  }
 }

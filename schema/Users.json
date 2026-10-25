@@ -60,10 +60,10 @@
         }
     },
     "model": {
-        "firstName": "John",
-        "email": "john.doe@example.com",
-        "tenant_id": "tenant_alpha",
-        "site_id": "site_hq_london",
-        "role_id": "role_admin"
+        "firstName": "",
+        "email": "",
+        "tenant_id": "",
+        "site_id": "",
+        "role_id": ""
     }
 }

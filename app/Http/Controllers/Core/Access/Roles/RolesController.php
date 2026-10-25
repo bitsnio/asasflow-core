@@ -6,6 +6,7 @@ use Illuminate\Routing\Controller;
 use Modules\Core\Http\Requests\Core\Access\Roles\RolesRequest;
 use Modules\Core\Models\Roles;
 use Modules\Core\Http\Resources\Core\Access\Roles\RolesResource;
+use Illuminate\Http\Request;
 
 
 class RolesController extends Controller
@@ -51,5 +52,12 @@ class RolesController extends Controller
         $roles->delete();
 
         return response()->noContent();
+    }
+
+    public function assignPermissions(Request $request)
+    {
+        return response()->json([
+            'message' => 'assignPermissions not implemented',
+        ], 501);
     }
 }

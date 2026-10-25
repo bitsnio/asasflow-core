@@ -6,6 +6,8 @@ use Modules\Core\Http\Controllers\Core\Access\Users\UsersController;
 use Modules\Core\Http\Controllers\Core\Access\Roles\RolesController;
 use Modules\Core\Http\Controllers\Core\Access\Permissions\PermissionsController;
 use Modules\Core\Http\Controllers\Core\Configuration\Settings\SettingsController;
+use Modules\Core\Http\Controllers\Core\Tenancy\TenantDomains\TenantDomainsController;
+use Modules\Core\Http\Controllers\Core\Tenancy\Sites\SitesController;
 
 Route::prefix('core')
     // ->middleware(['asasflow.permission'])
@@ -19,6 +21,12 @@ Route::prefix('core')
         Route::post('tenants/suspend', [TenantsController::class, 'suspend']);
 
         Route::post('tenants/provision', [TenantsController::class, 'provision']);
+
+        Route::apiResource('tenant-domains', TenantDomainsController::class);
+
+        Route::post('tenant-domains/verify', [TenantDomainsController::class, 'verify']);
+
+        Route::apiResource('sites', SitesController::class);
 
     });
 
@@ -38,7 +46,11 @@ Route::prefix('core')
 
         Route::post('users/register', [UsersController::class, 'register']);
 
+        Route::post('users/assign-roles', [UsersController::class, 'assignRoles']);
+
         Route::apiResource('roles', RolesController::class);
+
+        Route::post('roles/assign-permissions', [RolesController::class, 'assignPermissions']);
 
         Route::apiResource('permissions', PermissionsController::class);
 

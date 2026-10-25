@@ -95,4 +95,11 @@ class UsersController extends Controller
             'message' => 'register not implemented',
         ], 501);
     }
+
+    public function assignRoles(Request $request)
+    {
+        return response()->json([
+            'message' => 'assignRoles not implemented',
+        ], 501);
+    }
 }

@@ -4,7 +4,6 @@ namespace Modules\Core\Http\Controllers\Core\Tenancy\Tenants;
 
 use Illuminate\Routing\Controller;
 use Modules\Core\Http\Requests\Core\Tenancy\Tenants\TenantsRequest;
-use Modules\Core\Models\Tenants;
 use Modules\Core\Http\Resources\Core\Tenancy\Tenants\TenantsResource;
 use Illuminate\Http\Request;
 

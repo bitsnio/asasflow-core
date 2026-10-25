@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'module' => [
         'name' => 'Core',
@@ -42,11 +44,41 @@ return [
                             'suspend' => [
                                 'method' => 'POST',
                                 'permissionLabel' => 'Suspend tenants',
-                            ],
-                            'provision' => [
+                            ]
+                        ],
+                    ],
+
+                    [
+                        'name' => 'tenant-domains',
+                        'title' => 'Tenant Domains',
+                        'type' => 'resource',
+                        'model' => true,
+
+                        'permissions' => [
+                            'view' => 'View tenant domains',
+                            'create' => 'Add tenant domain',
+                            'update' => 'Update tenant domain',
+                            'delete' => 'Delete tenant domain',
+                        ],
+
+                        'actions' => [
+                            'verify' => [
                                 'method' => 'POST',
-                                'permissionLabel' => 'Provision tenant resources',
+                                'permissionLabel' => 'Verify domain ownership',
                             ],
+                        ],
+                    ],
+
+                    [
+                        'name' => 'sites',
+                        'title' => 'Sites & Branches',
+                        'type' => 'resource',
+                        'model' => false,
+                        'permissions' => [
+                            'view' => 'View sites',
+                            'create' => 'Create sites',
+                            'update' => 'Update sites',
+                            'delete' => 'Delete sites',
                         ],
                     ],
                 ],
@@ -66,7 +98,7 @@ return [
                         'name' => 'users',
                         'title' => 'Users',
                         'type' => 'resource',
-                        'model' => true,
+                        'model' => true, // Receives tenant_id & site_id automatically
 
                         'permissions' => [
                             'view' => 'View users',
@@ -88,15 +120,19 @@ return [
                                 'method' => 'POST',
                                 'permissionLabel' => 'Deactivate users',
                             ],
-                            'login'=> [
+                            'assignRoles' => [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Assign roles to user',
+                            ],
+                            'login' => [
                                 'method' => 'POST',
                                 'permissionLabel' => 'Login as user',
                             ],
-                            'logout'=> [
+                            'logout' => [
                                 'method' => 'POST',
                                 'permissionLabel' => 'Logout user',
                             ],
-                            'register'=> [
+                            'register' => [
                                 'method' => 'POST',
                                 'permissionLabel' => 'Register user',
                             ],
@@ -108,12 +144,21 @@ return [
                         'title' => 'Roles Management',
                         'type' => 'resource',
                         'model' => true,
+                        'tenancy' => true, // Tenant-scoped: each tenant has their own roles
+                        'site' => false,    // Roles apply across all sites of a tenant
 
                         'permissions' => [
                             'view' => 'View roles',
                             'create' => 'Create roles',
                             'update' => 'Update roles',
                             'delete' => 'Delete roles',
+                        ],
+
+                        'actions' => [
+                            'assignPermissions' => [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Assign permissions to role',
+                            ],
                         ],
                     ],
 
@@ -122,6 +167,8 @@ return [
                         'title' => 'Permissions Management',
                         'type' => 'resource',
                         'model' => true,
+                        'tenancy' => false, // Global system permissions (no tenant_id)
+                        'site' => false,
 
                         'permissions' => [
                             'view' => 'View permissions',

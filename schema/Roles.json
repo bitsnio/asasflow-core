@@ -1,45 +1,57 @@
+
 {
-    "$id": "https://api.bitsnio.com/schemas/role-creation.json",
-    "version": "1.0.0",
-    "schema": {
-        "title": "Role & Permission Assignment Form",
-        "description": "Simplified configuration form for defining user roles and assigning permissions.",
-        "type": "object",
-        "required": [
-            "name"
-        ],
-        "properties": {
-            "name": {
-                "type": "string",
-                "title": "Role Name",
-                "default": "Editor",
-                "description": "Unique name for the role (e.g., Administrator, Manager)"
-            },
-            "permissions": {
-                "type": "array",
-                "title": "Assigned Permissions",
-                "uniqueItems": true,
-                "x-data-source": "permissions_list",
-                "items": {
-                    "type": "string"
-                },
-                "widget": {
-                    "formlyConfig": {
-                        "type": "select",
-                        "props": {
-                            "multiple": true,
-                            "placeholder": "Select permissions"
-                        }
-                    }
-                }
+  "schema": {
+    "title": "Create Role",
+    "description": "Create a role for the current tenant.",
+    "type": "object",
+    "required": [
+      "name"
+    ],
+    "properties": {
+      "name": {
+        "type": "string",
+        "title": "Role Name",
+        "description": "Enter a unique name for this role.",
+        "minLength": 2,
+        "maxLength": 125,
+        "pattern": ".*\\S.*",
+        "widget": {
+          "formlyConfig": {
+            "props": {
+              "placeholder": "e.g. Branch Manager",
+              "required": true
             }
+          }
         }
-    },
-    "model": {
-        "name": "Editor",
-        "permissions": [
-            "users.view",
-            "users.update"
-        ]
+      },
+      "description": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "title": "Description",
+        "description": "Optional details about the role.",
+        "maxLength": 1000,
+        "widget": {
+          "formlyConfig": {
+            "type": "textarea",
+            "props": {
+              "placeholder": "Describe the role's responsibilities",
+              "rows": 3
+            }
+          }
+        }
+      },
+      "is_active": {
+        "type": "boolean",
+        "title": "Active",
+        "default": true
+      }
     }
+  },
+  "model": {
+    "name": "",
+    "description": null,
+    "is_active": true
+  }
 }

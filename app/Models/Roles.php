@@ -11,14 +11,16 @@ class Roles extends Model
 
     protected $fillable = [
         // @asasflow:generated-fillable:start
+        'tenant_id',
         'name',
-        'permissions',
+        'description',
+        'is_active',
         // @asasflow:generated-fillable:end
     ];
 
     protected $casts = [
         // @asasflow:generated-casts:start
-        'permissions' => 'array',
+        'is_active' => 'boolean',
         // @asasflow:generated-casts:end
     ];
 }

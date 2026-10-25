@@ -1,0 +1,50 @@
+{
+    "$id": "https://api.bitsnio.com/schemas/sites.json",
+    "version": "1.0.0",
+    "schema": {
+        "title": "Site / Branch",
+        "description": "Physical branches, warehouses, or subsidiaries for a tenant.",
+        "type": "object",
+        "required": [
+            "name",
+            "code"
+        ],
+        "properties": {
+            "name": {
+                "type": "string",
+                "title": "Site / Branch Name"
+            },
+            "code": {
+                "type": "string",
+                "title": "Site Code",
+                "description": "Unique short code (e.g. HQ-01, WH-EAST)"
+            },
+            "phone": {
+                "type": "string",
+                "title": "Branch Phone"
+            },
+            "email": {
+                "type": "string",
+                "format": "email",
+                "title": "Branch Email"
+            },
+            "address": {
+                "type": "string",
+                "title": "Full Physical Address"
+            },
+            "is_active": {
+                "type": "boolean",
+                "title": "Operational Status",
+                "default": true
+            }
+        }
+    },
+    "model": {
+        "name": "",
+        "code": "",
+        "phone": "",
+        "email": "",
+        "address": "",
+        "is_active": true
+    }
+}

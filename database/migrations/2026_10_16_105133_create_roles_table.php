@@ -10,8 +10,10 @@ return new class extends Migration
     {
         Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->default('Editor');
-            $table->json('permissions')->nullable();
+            $table->foreignId('tenant_id')->index();
+            $table->string('name');
+            $table->string('description')->nullable();
+            $table->boolean('is_active')->nullable()->default(true);
             $table->timestamps();
             $table->softDeletes();
         });

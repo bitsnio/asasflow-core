@@ -8,9 +8,11 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('permissions', function (Blueprint $table) {
+        Schema::create('tenant_domains', function (Blueprint $table) {
             $table->id();
-
+                        $table->string('domain');
+            $table->boolean('is_primary')->nullable()->default(false);
+            $table->boolean('is_verified')->nullable()->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -18,6 +20,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('permissions');
+        Schema::dropIfExists('tenant_domains');
     }
 };

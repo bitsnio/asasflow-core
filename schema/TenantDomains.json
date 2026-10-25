@@ -1,0 +1,32 @@
+{
+  "$id": "https://api.bitsnio.com/schemas/tenant-domains.json",
+  "version": "1.0.0",
+  "schema": {
+    "title": "Tenant Domain",
+    "description": "Domains and hostnames associated with a tenant.",
+    "type": "object",
+    "required": ["domain"],
+    "properties": {
+      "domain": {
+        "type": "string",
+        "title": "Hostname / Domain",
+        "description": "e.g. acme.platform.com or erp.acme.com"
+      },
+      "is_primary": {
+        "type": "boolean",
+        "title": "Primary Routing Domain",
+        "default": false
+      },
+      "is_verified": {
+        "type": "boolean",
+        "title": "DNS Verified Status",
+        "default": false
+      }
+    }
+  },
+  "model": {
+    "domain": "",
+    "is_primary": false,
+    "is_verified": false
+  }
+}
