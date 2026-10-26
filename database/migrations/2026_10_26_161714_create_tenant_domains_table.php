@@ -10,9 +10,11 @@ return new class extends Migration
     {
         Schema::create('tenant_domains', function (Blueprint $table) {
             $table->id();
-                        $table->string('domain');
+            // @asasflow:columns:start
+            $table->string('domain', 255);
             $table->boolean('is_primary')->nullable()->default(false);
             $table->boolean('is_verified')->nullable()->default(false);
+        // @asasflow:columns:end
             $table->timestamps();
             $table->softDeletes();
         });

@@ -11,7 +11,7 @@ use Illuminate\Notifications\Notifiable;
 
 class Users extends authenticatable implements JWTSubject
 {
-    use SoftDeletes,Notifiable;
+    use SoftDeletes, Notifiable;
 
     protected $fillable = [
         // @asasflow:generated-fillable:start
@@ -20,14 +20,22 @@ class Users extends authenticatable implements JWTSubject
         'firstName',
         'lastName',
         'email',
+        'password',
+        'email_verified_at',
         'role_id',
         // @asasflow:generated-fillable:end
     ];
 
     protected $casts = [
         // @asasflow:generated-casts:start
-
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
         // @asasflow:generated-casts:end
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
     ];
 
     /**

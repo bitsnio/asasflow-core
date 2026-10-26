@@ -8,16 +8,14 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('tenants', function (Blueprint $table) {
+        Schema::create('roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->default('Bitsnio Corp');
-            $table->string('slug');
-            $table->string('email');
-            $table->string('contact_number');
-            $table->json('address')->nullable();
-            $table->json('location_coordinates')->nullable();
-            $table->date('valid_until');
+            // @asasflow:columns:start
+            $table->foreignId('tenant_id')->index();
+            $table->string('name', 255);
+            $table->string('description', 255)->nullable();
             $table->boolean('is_active')->nullable()->default(true);
+        // @asasflow:columns:end
             $table->timestamps();
             $table->softDeletes();
         });
@@ -25,6 +23,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('tenants');
+        Schema::dropIfExists('roles');
     }
 };

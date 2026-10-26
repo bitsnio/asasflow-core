@@ -1,69 +1,91 @@
 {
-    "$id": "https://api.bitsnio.com/schemas/tenant-user-management.json",
-    "version": "1.0.0",
-    "schema": {
-        "title": "Tenant & User Management Form",
-        "description": "User form configuration with multi-tenancy and site assignments.",
-        "type": "object",
-        "required": [
-            "firstName",
-            "lastName",
-            "email",
-            "tenant_id",
-            "site_id",
-            "role_id"
-        ],
-        "properties": {
-            "firstName": {
-                "type": "string",
-                "title": "First Name",
-                "default": "John"
-            },
-            "lastName": {
-                "type": "string",
-                "title": "Last Name"
-            },
-            "email": {
-                "type": "string",
-                "title": "Email Address",
-                "minLength": 5
-            },
-            "tenant_id": {
-                "type": "string",
-                "title": "Select Tenant",
-                "widget": {
-                    "formlyConfig": {
-                        "type": "hidden"
-                    }
-                }
-            },
-            "site_id": {
-                "type": "string",
-                "title": "Assigned Site",
-                "x-data-source": "active_sites",
-                "widget": {
-                    "formlyConfig": {
-                        "type": "select"
-                    }
-                }
-            },
-            "role_id": {
-                "type": "string",
-                "title": "User Role",
-                "x-data-source": "roles_list",
-                "widget": {
-                    "formlyConfig": {
-                        "type": "select"
-                    }
-                }
+  "$id": "https://api.bitsnio.com/schemas/tenant-user-management.json",
+  "version": "1.0.0",
+  "schema": {
+    "title": "Tenant & User Management Form",
+    "description": "User form configuration with multi-tenancy and site assignments.",
+    "type": "object",
+    "required": [
+      "firstName",
+      "lastName",
+      "email",
+      "tenant_id",
+      "site_id",
+      "role_id"
+    ],
+    "properties": {
+      "firstName": {
+        "type": "string",
+        "title": "First Name",
+		"maxLength": 100
+      },
+      "lastName": {
+        "type": "string",
+        "title": "Last Name",
+		"maxLength": 100
+      },
+      "email": {
+        "type": "string",
+        "title": "Email Address",
+        "minLength": 5,
+		"unique": true,
+		"format": "email"
+      },
+      "password": {
+        "type": "string",
+        "title": "Password",
+        "minLength": 8,
+        "widget": {
+          "formlyConfig": {
+            "type": "input",
+            "templateOptions": {
+              "type": "password"
             }
+          }
         }
-    },
-    "model": {
-        "firstName": "",
-        "email": "",
-        "tenant_id": "",
-        "site_id": "",
-        "role_id": ""
+      },
+      "email_verified_at": {
+        "type": ["string", "null"],
+        "format": "date-time",
+        "title": "Email Verified At",
+        "readOnly": true
+      },
+      "tenant_id": {
+        "type": "string",
+        "title": "Select Tenant",
+        "widget": {
+          "formlyConfig": {
+            "type": "hidden"
+          }
+        }
+      },
+      "site_id": {
+        "type": "string",
+        "title": "Assigned Site",
+        "x-data-source": "active_sites",
+        "widget": {
+          "formlyConfig": {
+            "type": "select"
+          }
+        }
+      },
+      "role_id": {
+        "type": "string",
+        "title": "User Role",
+        "x-data-source": "roles_list",
+        "widget": {
+          "formlyConfig": {
+            "type": "select"
+          }
+        }
+      }
     }
+  },
+  "model": {
+    "firstName": "",
+    "email": "",
+    "tenant_id": "",
+    "site_id": "",
+    "role_id": ""
+  }
 }

@@ -1,0 +1,108 @@
+### AsasFlow REST Client requests
+### VS Code extension: REST Client (humao.rest-client)
+### Adjust baseUrl and route paths to match your actual api.php routes.
+
+@baseUrl = http://localhost:8000
+@apiPrefix = /api
+@usersPath = /core/access/users
+@authPath = /auth
+@email = admin@example.com
+@password = ChangeMe123!
+@token = paste_access_token_here
+@userId = 1
+
+### 1. Login (public)
+# Expected: access_token (or your configured response envelope)
+POST {{baseUrl}}{{apiPrefix}}{{authPath}}/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+### 2. Get authenticated user (JWT required)
+GET {{baseUrl}}{{apiPrefix}}{{authPath}}/me
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 3. Refresh JWT (JWT required)
+POST {{baseUrl}}{{apiPrefix}}{{authPath}}/refresh
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 4. Logout / invalidate current JWT (JWT required)
+POST {{baseUrl}}{{apiPrefix}}{{authPath}}/logout
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 5. List users (JWT + permissions expected)
+GET {{baseUrl}}{{apiPrefix}}{{usersPath}}?page=1
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 6. Create user (JWT + permissions expected)
+# Adapt fields to your UsersRequest and required database columns.
+POST {{baseUrl}}{{apiPrefix}}{{usersPath}}
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "email": "test.user@example.com",
+  "password": "ChangeMe123!"
+}
+
+### 7. Get one user (JWT + permissions expected)
+GET {{baseUrl}}{{apiPrefix}}{{usersPath}}/{{userId}}
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 8. Update user (JWT + permissions expected)
+# Adapt fields to your UsersRequest.
+PUT {{baseUrl}}{{apiPrefix}}{{usersPath}}/{{userId}}
+Accept: application/json
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "firstName": "Updated",
+  "lastName": "User"
+}
+
+### 9. Delete user (JWT + permissions expected)
+DELETE {{baseUrl}}{{apiPrefix}}{{usersPath}}/{{userId}}
+Accept: application/json
+Authorization: Bearer {{token}}
+
+### 10. Login with invalid credentials (expect 401)
+POST {{baseUrl}}{{apiPrefix}}{{authPath}}/login
+Accept: application/json
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "definitely-wrong"
+}
+
+### 11. Protected endpoint without token (expect 401)
+GET {{baseUrl}}{{apiPrefix}}{{authPath}}/me
+Accept: application/json
+
+### 12. Register (only if you intentionally enable public registration)
+# This request is intentionally commented out because public registration should
+# be opt-in and may not be part of your AsasFlow installation.
+# POST {{baseUrl}}{{apiPrefix}}{{authPath}}/register
+# Accept: application/json
+# Content-Type: application/json
+#
+# {
+#   "firstName": "New",
+#   "lastName": "User",
+#   "email": "new.user@example.com",
+#   "password": "ChangeMe123!",
+#   "password_confirmation": "ChangeMe123!"
+# }
