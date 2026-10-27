@@ -1,5 +1,5 @@
 ### Core API — REST Client
-@baseUrl = http://localhost:8000/api
+@baseUrl = http://localhost:8000
 @token = REPLACE_WITH_JWT_TOKEN
 @tenantId = 1
 @siteId = 1
@@ -20,8 +20,8 @@ Accept: application/json
 Content-Type: application/json
 
 {
-    "email": "admin@example.com",
-    "password": "password"
+    "email": "admin@primary.localhost",
+    "password": "password123"
 }
 
 ### Forgot password

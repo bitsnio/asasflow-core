@@ -1,6 +1,10 @@
 {
   "$id": "https://api.bitsnio.com/schemas/tenant-domains.json",
   "version": "1.0.0",
+  "generator": {
+    "model": false,
+    "migration": false
+  },
   "schema": {
     "title": "Tenant Domain",
     "description": "Domains and hostnames associated with a tenant.",

@@ -52,7 +52,7 @@ return [
                         'name' => 'tenant-domains',
                         'title' => 'Tenant Domains',
                         'type' => 'resource',
-                        'model' => true,
+                        'model' => false,
 
                         'permissions' => [
                             'view' => 'View tenant domains',

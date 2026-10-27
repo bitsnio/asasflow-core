@@ -77,6 +77,7 @@ class UsersController extends Controller
 
     public function login(Request $request)
     {
+        return "Sds";
         return response()->json([
             'message' => 'login not implemented',
         ], 501);

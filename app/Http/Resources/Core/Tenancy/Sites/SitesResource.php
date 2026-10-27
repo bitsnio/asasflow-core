@@ -12,7 +12,14 @@ class SitesResource extends JsonResource
     public function toArray(Request $request): array
     {
         // @asasflow:generated-fields:start
-        return parent::toArray($request);
+        return [
+            'name' => $this->name,
+            'code' => $this->code,
+            'phone' => $this->phone,
+            'email' => $this->email,
+            'address' => $this->address,
+            'is_active' => $this->is_active,
+        ];
         // @asasflow:generated-fields:end
     }
 }

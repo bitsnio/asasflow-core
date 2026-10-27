@@ -12,7 +12,11 @@ class TenantDomainsResource extends JsonResource
     public function toArray(Request $request): array
     {
         // @asasflow:generated-fields:start
-        return parent::toArray($request);
+        return [
+            'domain' => $this->domain,
+            'is_primary' => $this->is_primary,
+            'is_verified' => $this->is_verified,
+        ];
         // @asasflow:generated-fields:end
     }
 }
