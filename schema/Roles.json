@@ -1,5 +1,11 @@
 
 {
+  "$id": "https://example.com/schemas/roles.schema.json",
+  "version": "1.0.0",
+  "generator": {
+    "model": false,
+    "migration": false
+  },
   "schema": {
     "title": "Create Role",
     "description": "Create a role for the current tenant.",

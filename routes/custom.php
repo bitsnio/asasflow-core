@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\Core\Http\Controllers\Core\Access\Users\UsersController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -13,10 +15,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::prefix('core')->group(function (): void {
-    // Example:
-    //
-    // Route::middleware('auth:api')->get(
-    //     'reports/summary',
-    //     [ReportController::class, 'summary']
-    // );
+    Route::prefix('access')->group(function (): void {
+
+        Route::post('users/login', [UsersController::class, 'login']);
+        Route::post('users/forgot-password', [UsersController::class, 'forgotPassword']);
+
+        Route::post('users/reset-password', [UsersController::class, 'resetPassword']);
+    });
 });

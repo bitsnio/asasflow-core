@@ -13,64 +13,55 @@ class TenantsController extends Controller
 
     public function index()
     {
-        return TenantsResource::collection(
-            Tenants::paginate(15)
-        );
+        return response()->json([
+            'message' => 'Index not implemented',
+        ], 501);
     }
 
     public function store(
         TenantsRequest $request
     ) {
-        $item = Tenants::create(
-            $request->validated()
-        );
-
-        return new TenantsResource($item);
+        return response()->json([
+            'message' => 'Store not implemented',
+        ], 501);
     }
 
     public function show(
-        Tenants $tenants
+        $tenants
     ) {
-        return new TenantsResource($tenants);
+        return response()->json([
+            'message' => 'Show not implemented',
+        ], 501);
     }
 
     public function update(
         TenantsRequest $request,
-        Tenants $tenants
+        $tenants
     ) {
-        $tenants->update(
-            $request->validated()
-        );
-
-        return new TenantsResource($tenants);
+        return response()->json([
+            'message' => 'Update not implemented',
+        ], 501);
     }
 
     public function destroy(
-        Tenants $tenants
+        $tenants
     ) {
-        $tenants->delete();
-
-        return response()->noContent();
+        return response()->json([
+            'message' => 'Destroy not implemented',
+        ], 501);
     }
 
-public function activate(Request $request)
-{
-    return response()->json([
-        'message' => 'activate not implemented',
-    ], 501);
-}
+    public function activate(Request $request)
+    {
+        return response()->json([
+            'message' => 'activate not implemented',
+        ], 501);
+    }
 
-public function suspend(Request $request)
-{
-    return response()->json([
-        'message' => 'suspend not implemented',
-    ], 501);
-}
-
-public function provision(Request $request)
-{
-    return response()->json([
-        'message' => 'provision not implemented',
-    ], 501);
-}
+    public function suspend(Request $request)
+    {
+        return response()->json([
+            'message' => 'suspend not implemented',
+        ], 501);
+    }
 }

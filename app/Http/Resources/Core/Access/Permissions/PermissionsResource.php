@@ -12,6 +12,7 @@ class PermissionsResource extends JsonResource
     public function toArray(Request $request): array
     {
         // @asasflow:generated-fields:start
-        return [];        // @asasflow:generated-fields:end
+        return parent::toArray($request);
+        // @asasflow:generated-fields:end
     }
 }

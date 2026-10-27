@@ -8,7 +8,7 @@ return [
         'title' => 'System Administration',
 
         'middleware' => [
-            'asasflow.permission',
+            'auth:api',
         ],
 
         'children' => [
@@ -73,7 +73,7 @@ return [
                         'name' => 'sites',
                         'title' => 'Sites & Branches',
                         'type' => 'resource',
-                        'model' => false,
+                        'model' => true,
                         'permissions' => [
                             'view' => 'View sites',
                             'create' => 'Create sites',
@@ -108,10 +108,7 @@ return [
                         ],
 
                         'actions' => [
-                            'resetPassword' => [
-                                'method' => 'POST',
-                                'permissionLabel' => 'Reset user passwords',
-                            ],
+                           
                             'activate' => [
                                 'method' => 'POST',
                                 'permissionLabel' => 'Activate users',
@@ -135,6 +132,14 @@ return [
                             'register' => [
                                 'method' => 'POST',
                                 'permissionLabel' => 'Register user',
+                            ],
+                            'forgotPassword' => [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Forgot password',
+                            ],
+                            'resetPassword' => [
+                                'method' => 'POST',
+                                'permissionLabel' => 'Reset user passwords',
                             ],
                         ],
                     ],

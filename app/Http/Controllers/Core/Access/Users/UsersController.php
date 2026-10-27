@@ -54,13 +54,6 @@ class UsersController extends Controller
         return response()->noContent();
     }
 
-    public function resetPassword(Request $request)
-    {
-        return response()->json([
-            'message' => 'resetPassword not implemented',
-        ], 501);
-    }
-
     public function activate(Request $request)
     {
         return response()->json([
@@ -72,6 +65,13 @@ class UsersController extends Controller
     {
         return response()->json([
             'message' => 'deactivate not implemented',
+        ], 501);
+    }
+
+    public function assignRoles(Request $request)
+    {
+        return response()->json([
+            'message' => 'assignRoles not implemented',
         ], 501);
     }
 
@@ -96,10 +96,17 @@ class UsersController extends Controller
         ], 501);
     }
 
-    public function assignRoles(Request $request)
+    public function forgotPassword(Request $request)
     {
         return response()->json([
-            'message' => 'assignRoles not implemented',
+            'message' => 'forgotPassword not implemented',
+        ], 501);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        return response()->json([
+            'message' => 'resetPassword not implemented',
         ], 501);
     }
 }

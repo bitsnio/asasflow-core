@@ -1,108 +1,485 @@
-### AsasFlow REST Client requests
-### VS Code extension: REST Client (humao.rest-client)
-### Adjust baseUrl and route paths to match your actual api.php routes.
-
-@baseUrl = http://localhost:8000
-@apiPrefix = /api
-@usersPath = /core/access/users
-@authPath = /auth
-@email = admin@example.com
-@password = ChangeMe123!
-@token = paste_access_token_here
+### Core API — REST Client
+@baseUrl = http://localhost:8000/api
+@token = REPLACE_WITH_JWT_TOKEN
+@tenantId = 1
+@siteId = 1
 @userId = 1
+@roleId = 1
+@permissionId = 1
 
-### 1. Login (public)
-# Expected: access_token (or your configured response envelope)
-POST {{baseUrl}}{{apiPrefix}}{{authPath}}/login
+### ============================================================
+### 1. PUBLIC AUTHENTICATION
+### ============================================================
+
+### Login
+# Expected: success response containing your JWT token.
+# Copy the token into @token above if needed.
+# @name login
+POST {{baseUrl}}/core/access/users/login
 Accept: application/json
 Content-Type: application/json
 
 {
-  "email": "{{email}}",
-  "password": "{{password}}"
+    "email": "admin@example.com",
+    "password": "password"
 }
 
-### 2. Get authenticated user (JWT required)
-GET {{baseUrl}}{{apiPrefix}}{{authPath}}/me
-Accept: application/json
-Authorization: Bearer {{token}}
-
-### 3. Refresh JWT (JWT required)
-POST {{baseUrl}}{{apiPrefix}}{{authPath}}/refresh
-Accept: application/json
-Authorization: Bearer {{token}}
-
-### 4. Logout / invalidate current JWT (JWT required)
-POST {{baseUrl}}{{apiPrefix}}{{authPath}}/logout
-Accept: application/json
-Authorization: Bearer {{token}}
-
-### 5. List users (JWT + permissions expected)
-GET {{baseUrl}}{{apiPrefix}}{{usersPath}}?page=1
-Accept: application/json
-Authorization: Bearer {{token}}
-
-### 6. Create user (JWT + permissions expected)
-# Adapt fields to your UsersRequest and required database columns.
-POST {{baseUrl}}{{apiPrefix}}{{usersPath}}
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "firstName": "Test",
-  "lastName": "User",
-  "email": "test.user@example.com",
-  "password": "ChangeMe123!"
-}
-
-### 7. Get one user (JWT + permissions expected)
-GET {{baseUrl}}{{apiPrefix}}{{usersPath}}/{{userId}}
-Accept: application/json
-Authorization: Bearer {{token}}
-
-### 8. Update user (JWT + permissions expected)
-# Adapt fields to your UsersRequest.
-PUT {{baseUrl}}{{apiPrefix}}{{usersPath}}/{{userId}}
-Accept: application/json
-Content-Type: application/json
-Authorization: Bearer {{token}}
-
-{
-  "firstName": "Updated",
-  "lastName": "User"
-}
-
-### 9. Delete user (JWT + permissions expected)
-DELETE {{baseUrl}}{{apiPrefix}}{{usersPath}}/{{userId}}
-Accept: application/json
-Authorization: Bearer {{token}}
-
-### 10. Login with invalid credentials (expect 401)
-POST {{baseUrl}}{{apiPrefix}}{{authPath}}/login
+### Forgot password
+POST {{baseUrl}}/core/access/users/forgot-password
 Accept: application/json
 Content-Type: application/json
 
 {
-  "email": "{{email}}",
-  "password": "definitely-wrong"
+    "email": "admin@example.com"
 }
 
-### 11. Protected endpoint without token (expect 401)
-GET {{baseUrl}}{{apiPrefix}}{{authPath}}/me
+### Reset password
+# Replace the token with the reset token expected by your controller.
+POST {{baseUrl}}/core/access/users/reset-password
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "admin@example.com",
+    "token": "REPLACE_WITH_PASSWORD_RESET_TOKEN",
+    "password": "NewPassword123!",
+    "password_confirmation": "NewPassword123!"
+}
+
+
+### ============================================================
+### 2. AUTHENTICATED USER ACTIONS
+### ============================================================
+
+### Logout
+POST {{baseUrl}}/core/access/users/logout
+Authorization: Bearer {{token}}
 Accept: application/json
 
-### 12. Register (only if you intentionally enable public registration)
-# This request is intentionally commented out because public registration should
-# be opt-in and may not be part of your AsasFlow installation.
-# POST {{baseUrl}}{{apiPrefix}}{{authPath}}/register
+### Register
+# NOTE: Your current api.php places this route behind auth:api.
+POST {{baseUrl}}/core/access/users/register
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "test.user@example.com",
+    "password": "Password123!"
+}
+
+
+### ============================================================
+### 3. USERS — CRUD
+### ============================================================
+
+### List users
+GET {{baseUrl}}/core/access/users
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get user by ID
+GET {{baseUrl}}/core/access/users/{{userId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create user
+POST {{baseUrl}}/core/access/users
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "firstName": "Test",
+    "lastName": "User",
+    "email": "new.user@example.com",
+    "password": "Password123!"
+}
+
+### Update user
+PUT {{baseUrl}}/core/access/users/{{userId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "firstName": "Updated",
+    "lastName": "User",
+    "email": "new.user@example.com"
+}
+
+### Partially update user
+PATCH {{baseUrl}}/core/access/users/{{userId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "firstName": "Updated"
+}
+
+### Delete user
+DELETE {{baseUrl}}/core/access/users/{{userId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+### ============================================================
+### 4. USER MANAGEMENT ACTIONS
+### ============================================================
+
+### Activate user
+POST {{baseUrl}}/core/access/users/activate
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "id": {{userId}}
+}
+
+### Deactivate user
+POST {{baseUrl}}/core/access/users/deactivate
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "id": {{userId}}
+}
+
+### Assign roles to user
+POST {{baseUrl}}/core/access/users/assign-roles
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "user_id": {{userId}},
+    "roles": [{{roleId}}]
+}
+
+
+### ============================================================
+### 5. ROLES — CRUD
+### ============================================================
+
+### List roles
+GET {{baseUrl}}/core/access/roles
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get role by ID
+GET {{baseUrl}}/core/access/roles/{{roleId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create role
+POST {{baseUrl}}/core/access/roles
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "test-manager",
+    "guard_name": "api"
+}
+
+### Update role
+PUT {{baseUrl}}/core/access/roles/{{roleId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "updated-manager",
+    "guard_name": "api"
+}
+
+### Partially update role
+PATCH {{baseUrl}}/core/access/roles/{{roleId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "updated-manager"
+}
+
+### Delete role
+DELETE {{baseUrl}}/core/access/roles/{{roleId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Assign permissions to role
+POST {{baseUrl}}/core/access/roles/assign-permissions
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "role_id": {{roleId}},
+    "permissions": ["users.index", "users.store"]
+}
+
+
+### ============================================================
+### 6. PERMISSIONS — CRUD
+### ============================================================
+
+### List permissions
+GET {{baseUrl}}/core/access/permissions
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get permission by ID
+GET {{baseUrl}}/core/access/permissions/{{permissionId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create permission
+POST {{baseUrl}}/core/access/permissions
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "users.index",
+    "guard_name": "api"
+}
+
+### Update permission
+PUT {{baseUrl}}/core/access/permissions/{{permissionId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "users.list",
+    "guard_name": "api"
+}
+
+### Delete permission
+DELETE {{baseUrl}}/core/access/permissions/{{permissionId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+### ============================================================
+### 7. TENANTS — CRUD
+### ============================================================
+
+### List tenants
+GET {{baseUrl}}/core/tenancy/tenants
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get tenant
+GET {{baseUrl}}/core/tenancy/tenants/{{tenantId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create tenant
+# Replace the example fields with your tenant validation rules.
+POST {{baseUrl}}/core/tenancy/tenants
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Test Company"
+}
+
+### Update tenant
+PUT {{baseUrl}}/core/tenancy/tenants/{{tenantId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Updated Company"
+}
+
+### Delete tenant
+DELETE {{baseUrl}}/core/tenancy/tenants/{{tenantId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Activate tenant
+POST {{baseUrl}}/core/tenancy/tenants/activate
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "id": {{tenantId}}
+}
+
+### Suspend tenant
+POST {{baseUrl}}/core/tenancy/tenants/suspend
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "id": {{tenantId}}
+}
+
+
+### ============================================================
+### 8. TENANT DOMAINS — CRUD
+### ============================================================
+
+### List tenant domains
+GET {{baseUrl}}/core/tenancy/tenant-domains
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get tenant domain
+GET {{baseUrl}}/core/tenancy/tenant-domains/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create tenant domain
+POST {{baseUrl}}/core/tenancy/tenant-domains
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "tenant_id": {{tenantId}},
+    "domain": "example.test"
+}
+
+### Update tenant domain
+PUT {{baseUrl}}/core/tenancy/tenant-domains/1
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "tenant_id": {{tenantId}},
+    "domain": "updated.example.test"
+}
+
+### Delete tenant domain
+DELETE {{baseUrl}}/core/tenancy/tenant-domains/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Verify tenant domain
+POST {{baseUrl}}/core/tenancy/tenant-domains/verify
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "id": 1
+}
+
+
+### ============================================================
+### 9. SITES — CRUD
+### ============================================================
+
+### List sites
+GET {{baseUrl}}/core/tenancy/sites
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get site
+GET {{baseUrl}}/core/tenancy/sites/{{siteId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create site
+POST {{baseUrl}}/core/tenancy/sites
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "tenant_id": {{tenantId}},
+    "name": "Head Office"
+}
+
+### Update site
+PUT {{baseUrl}}/core/tenancy/sites/{{siteId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "tenant_id": {{tenantId}},
+    "name": "Updated Office"
+}
+
+### Delete site
+DELETE {{baseUrl}}/core/tenancy/sites/{{siteId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+### ============================================================
+### 10. SETTINGS — CRUD
+### ============================================================
+
+### List settings
+GET {{baseUrl}}/core/configuration/settings
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Get setting
+GET {{baseUrl}}/core/configuration/settings/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### Create setting
+POST {{baseUrl}}/core/configuration/settings
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "key": "app.timezone",
+    "value": "Asia/Karachi"
+}
+
+### Update setting
+PUT {{baseUrl}}/core/configuration/settings/1
+Authorization: Bearer {{token}}
+Accept: application/json
+Content-Type: application/json
+
+{
+    "key": "app.timezone",
+    "value": "UTC"
+}
+
+### Delete setting
+DELETE {{baseUrl}}/core/configuration/settings/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+
+### ============================================================
+### 11. AUTHENTICATION / AUTHORIZATION CHECKS
+### ============================================================
+
+### Check protected endpoint without a token
+GET {{baseUrl}}/core/access/users
+Accept: application/json
+
+### Check protected endpoint with an invalid token
+GET {{baseUrl}}/core/access/users
+Authorization: Bearer invalid-token
+Accept: application/json
+
+### Check authenticated user's permissions
+# Uses the endpoint you implement for the authenticated user's permissions.
+# Uncomment only if you have registered this route.
+# GET {{baseUrl}}/core/access/users/me/permissions
+# Authorization: Bearer {{token}}
 # Accept: application/json
-# Content-Type: application/json
-#
-# {
-#   "firstName": "New",
-#   "lastName": "User",
-#   "email": "new.user@example.com",
-#   "password": "ChangeMe123!",
-#   "password_confirmation": "ChangeMe123!"
-# }

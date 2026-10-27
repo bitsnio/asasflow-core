@@ -12,43 +12,41 @@ class SitesController extends Controller
 
     public function index()
     {
-        return SitesResource::collection(
-            Sites::paginate(15)
-        );
+        return response()->json([
+            'message' => 'Index not implemented',
+        ], 501);
     }
 
     public function store(
         SitesRequest $request
     ) {
-        $item = Sites::create(
-            $request->validated()
-        );
-
-        return new SitesResource($item);
+        return response()->json([
+            'message' => 'Store not implemented',
+        ], 501);
     }
 
     public function show(
-        Sites $sites
+        $sites
     ) {
-        return new SitesResource($sites);
+        return response()->json([
+            'message' => 'Show not implemented',
+        ], 501);
     }
 
     public function update(
         SitesRequest $request,
-        Sites $sites
+        $sites
     ) {
-        $sites->update(
-            $request->validated()
-        );
-
-        return new SitesResource($sites);
+        return response()->json([
+            'message' => 'Update not implemented',
+        ], 501);
     }
 
     public function destroy(
-        Sites $sites
+        $sites
     ) {
-        $sites->delete();
-
-        return response()->noContent();
+        return response()->json([
+            'message' => 'Destroy not implemented',
+        ], 501);
     }
 }

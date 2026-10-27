@@ -13,8 +13,7 @@ class PermissionsController extends Controller
 
     public function index()
     {
-     
-       return PermissionsResource::collection(
+        return PermissionsResource::collection(
             Permissions::paginate(15)
         );
     }
