@@ -2,16 +2,19 @@
 
 namespace Modules\Core\Models;
 
+use Bitsnio\AsasFlow\Features\Tenancy\Models\Tenant;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
+use Spatie\Permission\Traits\HasRoles;
 
-
-
-class Users extends authenticatable implements JWTSubject
+class Users extends Authenticatable implements JWTSubject
 {
-    use SoftDeletes, Notifiable;
+    use SoftDeletes, Notifiable, HasRoles;
+
+    protected string $guard_name = 'api';
 
     protected $fillable = [
         // @asasflow:generated-fillable:start
@@ -37,6 +40,16 @@ class Users extends authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
+
+    public function tenant(): BelongsTo
+    {
+        return $this->belongsTo(Tenant::class, 'tenant_id');
+    }
+
+    public function site(): BelongsTo
+    {
+        return $this->belongsTo(Sites::class, 'site_id');
+    }
 
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

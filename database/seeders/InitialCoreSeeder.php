@@ -2,12 +2,13 @@
 
 namespace Modules\Core\Database\Seeders;
 
-use Modules\Core\Models\Users;
-use Modules\Core\Models\Sites;
+use Bitsnio\AsasFlow\Facades\Permission;
 use Bitsnio\AsasFlow\Features\Tenancy\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Modules\Core\Models\Sites;
+use Modules\Core\Models\Users;
 
 class InitialCoreSeeder extends Seeder
 {
@@ -46,7 +47,7 @@ class InitialCoreSeeder extends Seeder
             );
 
             // 3. Create First Administrator User
-            Users::updateOrCreate(
+            $admin = Users::updateOrCreate(
                 [
                     'tenant_id' => $tenant->id,
                     'email'     => 'admin@primary.localhost',
@@ -60,6 +61,15 @@ class InitialCoreSeeder extends Seeder
                     'role_id'           => 'super-admin',
                 ]
             );
+
+            // 4. Sync Core permissions and assign super-admin role
+            Permission::syncPermissions('Core');
+            Permission::createRoleWithModuleBasedPermissions(
+                roleName: 'super-admin',
+                roleDescription: 'System Super Administrator',
+                moduleNames: ['Core'],
+            );
+            Permission::assignRoleToUsers('super-admin', $admin->id);
         });
     }
 }
