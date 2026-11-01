@@ -4,6 +4,7 @@ namespace Modules\Core\Http\Controllers\Core\Access\Users;
 
 use Bitsnio\AsasFlow\Facades\Menu;
 use Bitsnio\AsasFlow\Facades\Permission;
+use Bitsnio\AsasFlow\Foundation\Http\Traits\JsonResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -18,46 +19,63 @@ use Throwable;
 
 class UsersController extends Controller
 {
-    public function index()
+    use JsonResponseTrait;
+
+    public function index(): JsonResponse
     {
-        return UsersResource::collection(
-            Users::with('roles')->paginate(15)
+        $items = $this->paginateQuery(
+            Users::with('roles'),
+            15
+        );
+
+        return $this->paginatedResponse(
+            UsersResource::collection($items),
+            'Users retrieved successfully.'
         );
     }
 
-    public function store(
-        UsersRequest $request
-    ) {
+    public function store(UsersRequest $request): JsonResponse
+    {
         $item = Users::create(
             $request->validated()
         );
 
-        return new UsersResource($item);
+        return $this->createdResponse(
+            new UsersResource($item),
+            'User created successfully.'
+        );
     }
 
-    public function show(
-        Users $users
-    ) {
-        return new UsersResource($users->load('roles'));
+    public function show(Users $user): JsonResponse
+    {
+        return $this->successResponse(
+            new UsersResource($user->load('roles')),
+            'User retrieved successfully.'
+        );
     }
 
     public function update(
         UsersRequest $request,
-        Users $users
-    ) {
-        $users->update(
+        Users $user
+    ): JsonResponse {
+        $user->update(
             $request->validated()
         );
 
-        return new UsersResource($users);
+        return $this->successResponse(
+            new UsersResource($user),
+            'User updated successfully.'
+        );
     }
 
-    public function destroy(
-        Users $users
-    ) {
-        $users->delete();
+    public function destroy(Users $user): JsonResponse
+    {
+        $user->delete();
 
-        return response()->noContent();
+        return $this->successResponse(
+            null,
+            'User deleted successfully.'
+        );
     }
 
     public function login(Request $request): JsonResponse
@@ -71,18 +89,11 @@ class UsersController extends Controller
             ]);
 
             if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation error',
-                    'errors' => $validator->errors(),
-                ], 422);
+                return $this->validationErrorResponse($validator->errors());
             }
 
             if (!JWTAuth::attempt($input)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid login credentials.',
-                ], 401);
+                return $this->unauthorizedResponse('Invalid login credentials.');
             }
 
             $user = Users::with(['site', 'tenant', 'roles'])
@@ -90,17 +101,11 @@ class UsersController extends Controller
                 ->first();
 
             if (!$user) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'User not found.',
-                ], 404);
+                return $this->notFoundResponse('User not found.');
             }
 
             if (isset($user->is_active) && (int) $user->is_active === 0) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your account is inactive/blocked. Please contact support.',
-                ], 403);
+                return $this->forbiddenResponse('Your account is inactive/blocked. Please contact support.');
             }
 
             $fullName = trim(($user->firstName ?? '') . ' ' . ($user->lastName ?? ''));
@@ -124,25 +129,25 @@ class UsersController extends Controller
                 user: $user
             );
 
-            return response()->json([
-                'success' => true,
-                'message' => 'User logged in successfully.',
-                'token' => $token,
-                'data' => [
+            $response = $this->successResponse(
+                [
+                    'token' => $token,
                     'user_info' => $customClaims,
                     'meta' => $menu,
                 ],
-            ]);
+                'User logged in successfully.'
+            );
+
+            // Preserve top-level `token` alongside `data.token` for REST clients like access.http
+            $payload = $response->getData(true);
+            $payload['token'] = $token;
+            $response->setData($payload);
+
+            return $response;
         } catch (JWTException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Could not create token: ' . $e->getMessage(),
-            ], 500);
+            return $this->errorResponse('Could not create token: ' . $e->getMessage(), 500);
         } catch (Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 500);
+            return $this->errorResponse($e->getMessage(), 500);
         }
     }
 
@@ -159,11 +164,7 @@ class UsersController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         $data = $validator->validated();
@@ -171,11 +172,10 @@ class UsersController extends Controller
 
         $user = Users::create($data);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User registered successfully.',
-            'data' => new UsersResource($user),
-        ], 201);
+        return $this->createdResponse(
+            new UsersResource($user),
+            'User registered successfully.'
+        );
     }
 
     public function logout(Request $request): JsonResponse
@@ -185,15 +185,12 @@ class UsersController extends Controller
             Menu::clearCache($user);
             JWTAuth::invalidate(JWTAuth::getToken());
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Successfully logged out.',
-            ]);
+            return $this->successResponse(
+                null,
+                'Successfully logged out.'
+            );
         } catch (Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to logout: ' . $e->getMessage(),
-            ], 400);
+            return $this->errorResponse('Failed to logout: ' . $e->getMessage(), 400);
         }
     }
 
@@ -207,11 +204,7 @@ class UsersController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         try {
@@ -221,16 +214,12 @@ class UsersController extends Controller
 
             $result = Permission::assignRoleToUsers($roles, $userIds, $replaceExisting);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Roles assigned successfully.',
-                'data' => $result,
-            ]);
+            return $this->successResponse(
+                $result,
+                'Roles assigned successfully.'
+            );
         } catch (Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
+            return $this->errorResponse($e->getMessage(), 400);
         }
     }
 
@@ -239,32 +228,30 @@ class UsersController extends Controller
         $user = Users::findOrFail($request->input('id'));
         $user->update(['email_verified_at' => $user->email_verified_at ?? now()]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User activated successfully.',
-            'data' => new UsersResource($user),
-        ]);
+        return $this->successResponse(
+            new UsersResource($user),
+            'User activated successfully.'
+        );
     }
 
     public function deactivate(Request $request): JsonResponse
     {
         $user = Users::findOrFail($request->input('id'));
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User deactivated successfully.',
-            'data' => new UsersResource($user),
-        ]);
+        return $this->successResponse(
+            new UsersResource($user),
+            'User deactivated successfully.'
+        );
     }
 
     public function forgotPassword(Request $request): JsonResponse
     {
         $request->validate(['email' => ['required', 'email']]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Password reset instructions processed.',
-        ]);
+        return $this->successResponse(
+            null,
+            'Password reset instructions processed.'
+        );
     }
 
     public function resetPassword(Request $request): JsonResponse
@@ -275,11 +262,7 @@ class UsersController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         $user = Users::where('email', $request->input('email'))->firstOrFail();
@@ -287,9 +270,9 @@ class UsersController extends Controller
             'password' => Hash::make($request->input('password')),
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Password reset successfully.',
-        ]);
+        return $this->successResponse(
+            null,
+            'Password reset successfully.'
+        );
     }
 }

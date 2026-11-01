@@ -225,7 +225,7 @@ Content-Type: application/json
 ### ============================================================
 
 ### List Users
-GET {{baseUrl}}/core/access/users
+GET {{baseUrl}}/core/access/users?page=1&per_page=15
 Authorization: Bearer {{token}}
 Accept: application/json
 
@@ -253,6 +253,35 @@ Content-Type: application/json
 {
     "id": {{userId}}
 }
+
+### ============================================================
+### STEP 6. TENANCY ENDPOINTS (TENANTS, SITES, TENANT DOMAINS)
+### ============================================================
+
+### 6.1 List Tenants (Paginated Unified Response)
+GET {{baseUrl}}/core/tenancy/tenants?page=1&per_page=15
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 6.2 Get Single Tenant
+GET {{baseUrl}}/core/tenancy/tenants/{{tenantId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 6.3 List Sites (Paginated Unified Response)
+GET {{baseUrl}}/core/tenancy/sites?page=1&per_page=15
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 6.4 Get Single Site
+GET {{baseUrl}}/core/tenancy/sites/{{siteId}}
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 6.5 List Tenant Domains (Paginated Unified Response)
+GET {{baseUrl}}/core/tenancy/tenant-domains?page=1&per_page=15
+Authorization: Bearer {{token}}
+Accept: application/json
 
 ### Logout
 POST {{baseUrl}}/core/access/users/logout

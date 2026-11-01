@@ -3,6 +3,7 @@
 namespace Modules\Core\Http\Controllers\Core\Access\Roles;
 
 use Bitsnio\AsasFlow\Facades\Permission;
+use Bitsnio\AsasFlow\Foundation\Http\Traits\JsonResponseTrait;
 use Bitsnio\AsasFlow\Foundation\Models\Role;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -13,10 +14,18 @@ use Throwable;
 
 class RolesController extends Controller
 {
-    public function index()
+    use JsonResponseTrait;
+
+    public function index(): JsonResponse
     {
-        return RolesResource::collection(
-            Role::with('permissions')->paginate(15)
+        $items = $this->paginateQuery(
+            Role::with('permissions'),
+            15
+        );
+
+        return $this->paginatedResponse(
+            RolesResource::collection($items),
+            'Roles retrieved successfully.'
         );
     }
 
@@ -39,11 +48,7 @@ class RolesController extends Controller
         );
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         try {
@@ -56,11 +61,10 @@ class RolesController extends Controller
                     exceptPermissions: $request->input('except', []),
                 );
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Role created with module permissions successfully.',
-                    'data' => $result,
-                ], 201);
+                return $this->createdResponse(
+                    $result,
+                    'Role created with module permissions successfully.'
+                );
             }
 
             $role = Role::updateOrCreate(
@@ -79,16 +83,12 @@ class RolesController extends Controller
                 Permission::assignPermissionsToRole($role->id, $request->input('permissions'), true);
             }
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Role created successfully.',
-                'data' => new RolesResource($role->load('permissions')),
-            ], 201);
+            return $this->createdResponse(
+                new RolesResource($role->load('permissions')),
+                'Role created successfully.'
+            );
         } catch (Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
+            return $this->errorResponse($e->getMessage(), 400);
         }
     }
 
@@ -98,20 +98,20 @@ class RolesController extends Controller
             ? Role::with('permissions')->findOrFail((int) $role)
             : Role::with('permissions')->where('name', $role)->firstOrFail();
 
-        return response()->json([
-            'success' => true,
-            'data' => [
+        return $this->successResponse(
+            [
                 'id' => $roleModel->id,
                 'name' => $roleModel->name,
                 'description' => $roleModel->description,
                 'is_active' => $roleModel->is_active,
-                'permissions' => $roleModel->permissions->map(fn($p) => [
+                'permissions' => $roleModel->permissions->map(fn ($p) => [
                     'id' => $p->id,
                     'name' => $p->name,
                     'description' => $p->description,
                 ])->values(),
             ],
-        ]);
+            'Role retrieved successfully.'
+        );
     }
 
     public function update(Request $request, $role): JsonResponse
@@ -126,11 +126,10 @@ class RolesController extends Controller
             Permission::updateRolePermissions($roleModel->id, $request->input('permissions'));
         }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Role updated successfully.',
-            'data' => new RolesResource($roleModel->load('permissions')),
-        ]);
+        return $this->successResponse(
+            new RolesResource($roleModel->load('permissions')),
+            'Role updated successfully.'
+        );
     }
 
     public function destroy($role): JsonResponse
@@ -141,10 +140,10 @@ class RolesController extends Controller
 
         $roleModel->delete();
 
-        return response()->json([
-            'success' => true,
-            'message' => "Role [{$roleModel->name}] deleted successfully.",
-        ]);
+        return $this->successResponse(
+            null,
+            "Role [{$roleModel->name}] deleted successfully."
+        );
     }
 
     public function assignPermissions(Request $request): JsonResponse
@@ -161,11 +160,7 @@ class RolesController extends Controller
         );
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validation error',
-                'errors' => $validator->errors(),
-            ], 422);
+            return $this->validationErrorResponse($validator->errors());
         }
 
         try {
@@ -174,37 +169,33 @@ class RolesController extends Controller
 
             if ($mode === 'add') {
                 $result = Permission::addPermissionsToRole($roleIdentifier, $permissions);
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Permissions added to role successfully.',
-                    'data' => $result,
-                ]);
+
+                return $this->successResponse(
+                    $result,
+                    'Permissions added to role successfully.'
+                );
             }
 
             if ($mode === 'revoke') {
                 $result = Permission::revokePermissionsFromRole($roleIdentifier, $permissions);
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Permissions revoked from role successfully.',
-                    'data' => $result,
-                ]);
+
+                return $this->successResponse(
+                    $result,
+                    'Permissions revoked from role successfully.'
+                );
             }
 
             $updatedRole = Permission::assignPermissionsToRole($roleIdentifier, $permissions, true);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Role permissions synced successfully.',
-                'data' => [
+            return $this->successResponse(
+                [
                     'role' => $updatedRole->name,
                     'permissions' => $updatedRole->permissions()->pluck('name')->values(),
                 ],
-            ]);
+                'Role permissions synced successfully.'
+            );
         } catch (Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], 400);
+            return $this->errorResponse($e->getMessage(), 400);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace Modules\Core\Http\Controllers\Core\Access\Permissions;
 
 use Bitsnio\AsasFlow\Facades\Permission;
+use Bitsnio\AsasFlow\Foundation\Http\Traits\JsonResponseTrait;
 use Bitsnio\AsasFlow\Foundation\Models\Permission as PermissionModel;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -10,6 +11,8 @@ use Illuminate\Routing\Controller;
 
 class PermissionsController extends Controller
 {
+    use JsonResponseTrait;
+
     public function index(Request $request): JsonResponse
     {
         $module = $request->query('module');
@@ -19,12 +22,25 @@ class PermissionsController extends Controller
             Permission::syncPermissions($module);
         }
 
-        $permissions = Permission::getAllPermissions($module, $labelValue);
+        if ($labelValue || $module !== null) {
+            $permissions = Permission::getAllPermissions($module, $labelValue);
 
-        return response()->json([
-            'success' => true,
-            'data' => $permissions,
-        ]);
+            return $this->paginatedResponse(
+                $permissions,
+                'Permissions retrieved successfully.'
+            );
+        }
+
+        $items = $this->paginateQuery(
+            PermissionModel::query(),
+            15,
+            true
+        );
+
+        return $this->paginatedResponse(
+            $items,
+            'Permissions retrieved successfully.'
+        );
     }
 
     public function store(Request $request): JsonResponse
@@ -47,11 +63,10 @@ class PermissionsController extends Controller
 
         Permission::clearCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Permission saved successfully.',
-            'data' => $item,
-        ], 201);
+        return $this->createdResponse(
+            $item,
+            'Permission saved successfully.'
+        );
     }
 
     public function show($permission): JsonResponse
@@ -60,10 +75,10 @@ class PermissionsController extends Controller
             ? PermissionModel::findOrFail((int) $permission)
             : PermissionModel::where('name', $permission)->firstOrFail();
 
-        return response()->json([
-            'success' => true,
-            'data' => $item,
-        ]);
+        return $this->successResponse(
+            $item,
+            'Permission retrieved successfully.'
+        );
     }
 
     public function update(Request $request, $permission): JsonResponse
@@ -75,11 +90,10 @@ class PermissionsController extends Controller
         $item->update($request->only(['name', 'description', 'guard_name']));
         Permission::clearCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Permission updated successfully.',
-            'data' => $item,
-        ]);
+        return $this->successResponse(
+            $item,
+            'Permission updated successfully.'
+        );
     }
 
     public function destroy($permission): JsonResponse
@@ -91,9 +105,9 @@ class PermissionsController extends Controller
         $item->delete();
         Permission::clearCache();
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Permission deleted successfully.',
-        ]);
+        return $this->successResponse(
+            null,
+            'Permission deleted successfully.'
+        );
     }
 }
