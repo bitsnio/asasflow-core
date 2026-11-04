@@ -46,31 +46,31 @@ class UsersController extends Controller
         );
     }
 
-    public function show(Users $user): JsonResponse
+    public function show(Users $users): JsonResponse
     {
         return $this->successResponse(
-            new UsersResource($user->load('roles')),
+            new UsersResource($users->load('roles')),
             'User retrieved successfully.'
         );
     }
 
     public function update(
         UsersRequest $request,
-        Users $user
+        Users $users
     ): JsonResponse {
-        $user->update(
+        $users->update(
             $request->validated()
         );
 
         return $this->successResponse(
-            new UsersResource($user),
+            new UsersResource($users),
             'User updated successfully.'
         );
     }
 
-    public function destroy(Users $user): JsonResponse
+    public function destroy(Users $users): JsonResponse
     {
-        $user->delete();
+        $users->delete();
 
         return $this->successResponse(
             null,
@@ -140,7 +140,7 @@ class UsersController extends Controller
 
             // Preserve top-level `token` alongside `data.token` for REST clients like access.http
             $payload = $response->getData(true);
-            $payload['token'] = $token;
+            // $payload['token'] = $token;
             $response->setData($payload);
 
             return $response;

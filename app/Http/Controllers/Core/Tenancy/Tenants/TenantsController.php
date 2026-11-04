@@ -2,13 +2,13 @@
 
 namespace Modules\Core\Http\Controllers\Core\Tenancy\Tenants;
 
+use Bitsnio\AsasFlow\Features\Tenancy\Models\Tenant;
 use Bitsnio\AsasFlow\Foundation\Http\Traits\JsonResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Core\Http\Requests\Core\Tenancy\Tenants\TenantsRequest;
 use Modules\Core\Http\Resources\Core\Tenancy\Tenants\TenantsResource;
-use Modules\Core\Models\Tenants;
 
 class TenantsController extends Controller
 {
@@ -17,7 +17,7 @@ class TenantsController extends Controller
     public function index(): JsonResponse
     {
         $items = $this->paginateQuery(
-            Tenants::query(),
+            Tenant::query(),
             15
         );
 
@@ -29,7 +29,7 @@ class TenantsController extends Controller
 
     public function store(TenantsRequest $request): JsonResponse
     {
-        $item = Tenants::create(
+        $item = Tenant::create(
             $request->validated()
         );
 
@@ -39,31 +39,43 @@ class TenantsController extends Controller
         );
     }
 
-    public function show(Tenants $tenant): JsonResponse
+    public function show($tenant): JsonResponse
     {
+        $item = is_numeric($tenant)
+            ? Tenant::findOrFail((int) $tenant)
+            : Tenant::where('slug', $tenant)->firstOrFail();
+
         return $this->successResponse(
-            new TenantsResource($tenant),
+            new TenantsResource($item),
             'Tenant retrieved successfully.'
         );
     }
 
     public function update(
         TenantsRequest $request,
-        Tenants $tenant
+        $tenant
     ): JsonResponse {
-        $tenant->update(
+        $item = is_numeric($tenant)
+            ? Tenant::findOrFail((int) $tenant)
+            : Tenant::where('slug', $tenant)->firstOrFail();
+
+        $item->update(
             $request->validated()
         );
 
         return $this->successResponse(
-            new TenantsResource($tenant),
+            new TenantsResource($item),
             'Tenant updated successfully.'
         );
     }
 
-    public function destroy(Tenants $tenant): JsonResponse
+    public function destroy($tenant): JsonResponse
     {
-        $tenant->delete();
+        $item = is_numeric($tenant)
+            ? Tenant::findOrFail((int) $tenant)
+            : Tenant::where('slug', $tenant)->firstOrFail();
+
+        $item->delete();
 
         return $this->successResponse(
             null,
@@ -73,7 +85,7 @@ class TenantsController extends Controller
 
     public function activate(Request $request): JsonResponse
     {
-        $tenant = Tenants::findOrFail($request->input('id'));
+        $tenant = Tenant::findOrFail($request->input('id'));
         $tenant->update(['is_active' => true]);
 
         return $this->successResponse(
@@ -84,7 +96,7 @@ class TenantsController extends Controller
 
     public function suspend(Request $request): JsonResponse
     {
-        $tenant = Tenants::findOrFail($request->input('id'));
+        $tenant = Tenant::findOrFail($request->input('id'));
         $tenant->update(['is_active' => false]);
 
         return $this->successResponse(

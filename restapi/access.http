@@ -1,6 +1,6 @@
 ### Core API — REST Client (End-to-End Flow)
 @baseUrl = http://localhost:8000
-@token = {{login.response.body.token}}
+@token = {{login.response.body.data.token}}
 @tenantId = 1
 @siteId = 1
 @userId = 1

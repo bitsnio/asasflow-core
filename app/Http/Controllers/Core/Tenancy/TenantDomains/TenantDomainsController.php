@@ -2,13 +2,13 @@
 
 namespace Modules\Core\Http\Controllers\Core\Tenancy\TenantDomains;
 
+use Bitsnio\AsasFlow\Features\Tenancy\Models\TenantDomain;
 use Bitsnio\AsasFlow\Foundation\Http\Traits\JsonResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Core\Http\Requests\Core\Tenancy\TenantDomains\TenantDomainsRequest;
 use Modules\Core\Http\Resources\Core\Tenancy\TenantDomains\TenantDomainsResource;
-use Modules\Core\Models\TenantDomains;
 
 class TenantDomainsController extends Controller
 {
@@ -17,7 +17,7 @@ class TenantDomainsController extends Controller
     public function index(): JsonResponse
     {
         $items = $this->paginateQuery(
-            TenantDomains::query(),
+            TenantDomain::query(),
             15
         );
 
@@ -29,7 +29,7 @@ class TenantDomainsController extends Controller
 
     public function store(TenantDomainsRequest $request): JsonResponse
     {
-        $item = TenantDomains::create(
+        $item = TenantDomain::create(
             $request->validated()
         );
 
@@ -39,31 +39,37 @@ class TenantDomainsController extends Controller
         );
     }
 
-    public function show(TenantDomains $tenant_domain): JsonResponse
+    public function show($tenant_domain): JsonResponse
     {
+        $item = TenantDomain::findOrFail($tenant_domain);
+
         return $this->successResponse(
-            new TenantDomainsResource($tenant_domain),
+            new TenantDomainsResource($item),
             'Tenant domain retrieved successfully.'
         );
     }
 
     public function update(
         TenantDomainsRequest $request,
-        TenantDomains $tenant_domain
+        $tenant_domain
     ): JsonResponse {
-        $tenant_domain->update(
+        $item = TenantDomain::findOrFail($tenant_domain);
+
+        $item->update(
             $request->validated()
         );
 
         return $this->successResponse(
-            new TenantDomainsResource($tenant_domain),
+            new TenantDomainsResource($item),
             'Tenant domain updated successfully.'
         );
     }
 
-    public function destroy(TenantDomains $tenant_domain): JsonResponse
+    public function destroy($tenant_domain): JsonResponse
     {
-        $tenant_domain->delete();
+        $item = TenantDomain::findOrFail($tenant_domain);
+
+        $item->delete();
 
         return $this->successResponse(
             null,
@@ -73,8 +79,12 @@ class TenantDomainsController extends Controller
 
     public function verify(Request $request): JsonResponse
     {
-        return $this->notImplementedResponse(
-            'verify not implemented'
+        $domain = TenantDomain::findOrFail($request->input('id'));
+        $domain->update(['is_verified' => true]);
+
+        return $this->successResponse(
+            new TenantDomainsResource($domain),
+            'Tenant domain verified successfully.'
         );
     }
 }
