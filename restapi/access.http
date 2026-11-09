@@ -1,5 +1,6 @@
 ### Core API — REST Client (End-to-End Flow)
-@baseUrl = http://localhost:8000
+# @baseUrl = http://localhost:8000
+@baseUrl = http://servicespf.bitsnio.com
 @token = {{login.response.body.data.token}}
 @tenantId = 1
 @siteId = 1
@@ -280,6 +281,55 @@ Accept: application/json
 
 ### 6.5 List Tenant Domains (Paginated Unified Response)
 GET {{baseUrl}}/core/tenancy/tenant-domains?page=1&per_page=15
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### ============================================================
+### STEP 7. UNIFIED SCHEMA DROPDOWN & SETTINGS ENDPOINTS
+### ============================================================
+
+### 7.1 Dropdown: Virtual Modules List
+GET {{baseUrl}}/dropdown/modules/name
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 7.2 Dropdown: Virtual Permissions List (Core Module)
+GET {{baseUrl}}/dropdown/permissions/name?module=Core
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 7.3 Dropdown: Virtual Settings List (Label -> Key for Core)
+GET {{baseUrl}}/dropdown/settings/label/key?module=core
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 7.4 Dropdown: Virtual Settings Options for a Specific Setting (`default_currency`)
+GET {{baseUrl}}/dropdown/settings/default_currency?module=core
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 7.5 Dropdown: Users (Automatic `name` -> `firstName,lastName` Fallback)
+GET {{baseUrl}}/dropdown/users/name/id
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 7.6 Dropdown: Sites (Composite `code,name` Label + Filter)
+GET {{baseUrl}}/dropdown/sites/code,name/id?is_active=1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 7.7 Dropdown: Roles
+GET {{baseUrl}}/dropdown/roles/name/id
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 7.8 Centralised Settings: Get All Registered Settings Modules & Values
+GET {{baseUrl}}/settings?with_settings=1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 7.9 Centralised Settings: Get Core Module Settings Schema & Values
+GET {{baseUrl}}/settings/core
 Authorization: Bearer {{token}}
 Accept: application/json
 
